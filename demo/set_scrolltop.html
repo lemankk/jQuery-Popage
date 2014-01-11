@@ -1,0 +1,24 @@
+<html>
+<head>
+<style>@import url(style.css);body{background:url(stacked_wood.jpg)}</style>
+<script>
+window.onload = function(){
+	
+	window.popage = window.parent.popage;
+	popage('on','popage_scroll', function(){
+		document.getElementById('toolbar').style.top = (popage('scrollTop')+10)+'px';
+	})
+	popage('height', 5000);
+}
+</script>
+</head>
+<body>
+	<div id="toolbar">
+<button class="btn" onclick="popage('scrollTop', 25)">Scroll To 25</button>
+<button class="btn" onclick="popage('scrollTop', 1000)">Scroll To 1000</button>
+<button class="btn" onclick="popage('scrollByY', 50)">Scroll By +50</button>
+<button class="btn" onclick="popage('scrollByY',-50)">Scroll By -50</button>
+<button class="btn" onclick="popage('close')">Close Frame</button>
+</div>
+</body>
+</html>
