@@ -85,9 +85,9 @@ Popage.prototype = {
 	    		href: options
 	    	}, defaults);
 	    } else if(typeof options == 'object'){
-	    	for(var key in options){
-	    		this.options[key] = options[key];
-	    	}
+	    	
+	    	this.options = $.extend(options, defaults);
+
 	    	if(options.url)
 		    	href = options.url;
 	    	else if(options.href)
