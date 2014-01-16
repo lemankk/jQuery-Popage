@@ -85,15 +85,16 @@ Popage.prototype = {
 	    		href: options
 	    	}, defaults);
 	    } else if(typeof options == 'object'){
-	    	
-	    	this.options = $.extend(options, defaults);
+	    	this.options = {};
+	    	this.options = $.extend(this.options ,options);
+	    	this.options = $.extend(this.options ,defaults);
 
-	    	if(options.url)
-		    	href = options.url;
-	    	else if(options.href)
-		    	href = options.href;
-	    	else if(options.html)
-	    		html = options.html;
+	    	if(this.options.url)
+		    	href = this.options.url;
+	    	else if(this.options.href)
+		    	href = this.options.href;
+	    	else if(this.options.html)
+	    		html = this.options.html;
 	    	
 	    }
 	    
