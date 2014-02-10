@@ -8,6 +8,7 @@
 // 
 ;(function(){
 
+var _log = typeof window.console != 'undefined' ? window.console.log : function(){};
 
 function getBrowserSize() {
 	var o = {};
@@ -44,14 +45,16 @@ var Popage = function(options){
 	this.options = options;
 	this.initialize.apply(this,arguments);
 };
+Popage.instancesCounter = 0;
 Popage.prototype = {
 	options:null,
 	$el: null,
 	
 	$shadow: null,
 	$frame: null,
-	
+	__instanceIndex : -1,
 	initialize: function(){
+		this.__instanceIndex = Popage.instancesCounter++;
 		this.createUI();
 	},
 	
@@ -69,6 +72,7 @@ Popage.prototype = {
 	onOpened: null,
 	onClosed:null,
 	open : function( options ){
+		_log('Popage['+this.__instanceIndex +'].open');
 		var $body = jQuery('body');
 		
 		if(this._isOpened){
@@ -154,6 +158,7 @@ Popage.prototype = {
 		    this.onOpened();
 	},
 	close: function(){
+		_log('Popage['+this.__instanceIndex +'].close');
 	    this.$el.hide();
 	    jQuery('body').css('overflow',this._beforeState);
 	    this.$frame.empty();
@@ -270,7 +275,7 @@ Popage.prototype = {
 	},
 	
 	destroy: function(){
-		
+		_log('Popage['+this.__instanceIndex +'].destroy');
 		this.$el.remove();
 		this.$shadow.remove();
 		this.$frame.remove();
