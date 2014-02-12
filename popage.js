@@ -8,7 +8,11 @@
 // 
 ;(function(){
 
-var _log = typeof window.console != 'undefined' ? window.console.log : function(){};
+var _log = function(){
+	if(typeof window.console != 'undefined'){
+		console.log.apply(console, arguments);
+	}
+};
 
 function getBrowserSize() {
 	var o = {};
