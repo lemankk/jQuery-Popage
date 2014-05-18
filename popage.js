@@ -125,18 +125,18 @@ Popage.prototype = {
 	    	this._width = $content.width();
 	    	this._height = $content.height();
 	    }else{
-	    	var scrollbar = options.useScrollbar ? 'auto':'no';
+	    	var scrollbar = this.options.useScrollbar ? 'auto':'no';
 		    this.$frame.append('<iframe class="popage-frame-content" src="'+href+'" scrolling="'+scrollbar+'" frameborder="0" allowtransparency="true" />');
 	    }
-	    if(options){
-	    	if(options.width)
-	    		this._width = options.width;
-	    	if(options.height)
-	    		this._height = options.height;
+	    if(this.options){
+	    	if(this.options.width)
+	    		this._width = this.options.width;
+	    	if(this.options.height)
+	    		this._height = this.options.height;
 	    		
-	    	if(options.boundToWindow){
-	    		this._width = $(window).width() - options.paddingLeft - options.paddingRight;
-	    		this._height = $(window).height() - options.paddingTop - options.paddingBottom;
+	    	if(this.options.boundToWindow){
+	    		this._width = $(window).width() - this.options.paddingLeft - this.options.paddingRight;
+	    		this._height = $(window).height() - this.options.paddingTop - this.options.paddingBottom;
 	    		
 	    	}
     	}
@@ -158,8 +158,14 @@ Popage.prototype = {
 	    this._isOpened = true;
 	    
 	    $body.css('overflow','hidden');
+	    
+		if(typeof jQuery != 'undefined'){
+	    	jQuery(window).trigger(eventPrefix+'open', this);
+	    }
 	    if(typeof this.onOpened == 'function')
-		    this.onOpened();
+		    this.onOpened.apply(this,[]);
+	    if(typeof this.options.onOpened == 'function')
+		    this.options.onOpened.apply(this,[]);
 	},
 	close: function(){
 		_log('Popage['+this.__instanceIndex +'].close');
@@ -171,13 +177,19 @@ Popage.prototype = {
 	    
 	    if(this._isOpened){
 			jQuery(window).off('resize.popage');
-	    }
-	    if(this._isOpened){
+
 		    this._isOpened = false;
 		    this.options.html = null;
 		    this.options.href = null;
+		    
+	    
+			if(typeof jQuery != 'undefined'){
+		   		jQuery(window).trigger(eventPrefix+'close', this);
+		   	}
 		    if(typeof this.onClosed == 'function')
 			    this.onClosed();
+		    if(typeof this.options.onClosed == 'function')
+			    this.options.onClosed.apply(this,[]);
 		}
 	},
 	
@@ -247,6 +259,10 @@ Popage.prototype = {
 	},
 	
 	render: function(){
+    	var self = this;
+		if(typeof self.options.beforeRender == 'function'){
+			self.options.beforeRender.apply(self,[]);
+		}
 		var $body = $('body');
 	    var $frame = this.$frame;
 	    var $wrap = this.$el;
@@ -276,6 +292,10 @@ Popage.prototype = {
 	    prop.width = fw;
 	    prop.height =fh;
 	    $frame.find('.popage-frame-content').css(prop);
+    	
+		if(typeof self.options.afterRender == 'function'){
+			self.options.afterRender.apply(self,[]);
+		}
 	},
 	
 	destroy: function(){
@@ -303,6 +323,10 @@ var getInstance = function(){
 		return window.top.$.popage.getInstance();
 	
 	return null;
+};
+
+var getAll = function(){
+	return popages;
 };
 
 var createInstance = function(){
@@ -351,12 +375,6 @@ var popage = function(method, options){
 		
 		var ins = createInstance();
 		ins.open(options);
-		ins.onOpened = function(){
-			jQuery(window).trigger(eventPrefix+'open', ins);
-		};
-		ins.onClosed = function(){
-			jQuery(window).trigger(eventPrefix+'close', ins);
-		};
 	}else if( method == 'close'){
 		
 		if(isParentExist)
@@ -501,6 +519,7 @@ if(typeof jQuery != 'undefined'){
 	};
 	jQuery.popage.defaults = defaults;
 	jQuery.popage.getInstance = getInstance;
+	jQuery.popage.getAll = getAll;
 }
 if(typeof window != 'undefined'){
 	if(typeof window.popage == 'object'){
@@ -563,6 +582,7 @@ if(typeof window != 'undefined'){
 	}
 	window.popage.defaults = defaults;
 	window.popage.getInstance = getInstance;
+	window.popage.geAll = getAll;
 	
 }
 })();
