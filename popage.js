@@ -117,7 +117,7 @@ Popage.prototype = {
 	    	var self = this;
 	    	
 	    	$content.find('.popage-close').on('click',function(){
-	    		self.close();
+	    		popage('close');
 	    	});
 	    	
 	    	$wrap.append($content);
@@ -163,9 +163,9 @@ Popage.prototype = {
 	    	jQuery(window).trigger(eventPrefix+'open', this);
 	    }
 	    if(typeof this.onOpened == 'function')
-		    this.onOpened.apply(this,[]);
+		    this.onOpened.apply(this,null);
 	    if(typeof this.options.onOpened == 'function')
-		    this.options.onOpened.apply(this,[]);
+		    this.options.onOpened.apply(this,null);
 	},
 	close: function(){
 		_log('Popage['+this.__instanceIndex +'].close');
@@ -182,14 +182,15 @@ Popage.prototype = {
 		    this.options.html = null;
 		    this.options.href = null;
 		    
-	    
 			if(typeof jQuery != 'undefined'){
 		   		jQuery(window).trigger(eventPrefix+'close', this);
 		   	}
-		    if(typeof this.onClosed == 'function')
+		    if(typeof this.onClosed == 'function'){
 			    this.onClosed();
-		    if(typeof this.options.onClosed == 'function')
-			    this.options.onClosed.apply(this,[]);
+		    }
+		    if(typeof this.options.onClosed == 'function'){
+			    this.options.onClosed.apply(this,null);
+		    }
 		}
 	},
 	
@@ -291,6 +292,13 @@ Popage.prototype = {
 	    if(prop.marginTop< 0) prop.marginTop = 0;
 	    prop.width = fw;
 	    prop.height =fh;
+	    	if(this.options.boundToWindow){
+	    		prop.width  = '100%';
+	    		prop.marginLeft = 0;
+
+	    		prop.height  = '100%';
+	    		prop.marginTop = 0;
+	    	}
 	    $frame.find('.popage-frame-content').css(prop);
     	
 		if(typeof self.options.afterRender == 'function'){
@@ -306,7 +314,11 @@ Popage.prototype = {
 		this.$el = null;
 		this.$shadow = null;
 		this.$frame = null;
-		
+		/*
+		if($.inArray(this, popages)>=0){
+			popages.splice( $.inArray(this, popages), 1);
+		}
+		//*/
 		this.onOpened = null;
 		this.onClosed = null;
 	}
@@ -382,6 +394,7 @@ var popage = function(method, options){
 		
 		var ins = getInstance();
 		if(ins){
+			console.log('Going to close ',ins);
 			ins.close();
 			ins.destroy();
 			ins = null;
